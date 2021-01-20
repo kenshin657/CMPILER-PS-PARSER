@@ -1,0 +1,5 @@
+e   : t ep;
+ep  : PLUS t ep | ;
+t   : f tp;
+tp  : MULT f tp | ;
+f   : LPAREN e RPAREN  | LBRAK e RBRAK | DIGIT ;
