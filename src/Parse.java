@@ -42,7 +42,7 @@ public class Parse {
                     fw.write(token.tokenType + " ");
                     //System.out.print(token.tokenType + " ");
                 }
-                System.out.println("\n");
+                //System.out.println("\n");
                 fw.write("\n");
                 //System.out.println("");
 
