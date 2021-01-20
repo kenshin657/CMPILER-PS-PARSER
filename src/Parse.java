@@ -30,16 +30,16 @@ public class Parse {
 
         try {
             FileWriter fw = new FileWriter("output.txt");
-            ArrayList<String> line = new ArrayList<String>();
+            ArrayList<String> tmp = new ArrayList<String>();
             for (String s : lineArray) {
-                line.add(s);
+                tmp.add(s);
 
                 s = s.replaceAll("\\(", "( ");
                 s = s.replaceAll("\\)", " )");
                 s = s.replaceAll("\\[", "[ ");
                 s = s.replaceAll("\\]", " ]");
 
-                System.out.println(s);
+                //System.out.println(s);
 
                 String[] fileLine = s.split(" ");
 
