@@ -1,5 +1,7 @@
+import javax.print.DocFlavor;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Parse {
     public static void main(String[] args) {
@@ -9,6 +11,7 @@ public class Parse {
         String filePath = null;
         ArrayList<String> lineArray = new ArrayList<>();
         ArrayList<String> lexicals = new ArrayList<>();
+        ArrayList<String> lexemes = new ArrayList<>();
 
         try {
             //filePath = reader.readLine();
@@ -28,41 +31,44 @@ public class Parse {
             err.printStackTrace();
         }
 
-        try {
-            FileWriter fw = new FileWriter("output.txt");
-            ArrayList<String> tmp = new ArrayList<String>();
-            for (String s : lineArray) {
-                tmp.add(s);
+            //FileWriter fw = new FileWriter("output.txt");
+        ArrayList<String> tmp = new ArrayList<String>();
+        for (String s : lineArray) {
+            tmp.add(s);
 
-                s = s.replaceAll("\\(", "( ");
-                s = s.replaceAll("\\)", " )");
-                s = s.replaceAll("\\[", "[ ");
-                s = s.replaceAll("\\]", " ]");
+            s = s.replaceAll("\\(", "( ");
+            s = s.replaceAll("\\)", " )");
+            s = s.replaceAll("\\[", "[ ");
+            s = s.replaceAll("\\]", " ]");
 
                 //System.out.println(s);
 
-                String[] fileLine = s.split(" ");
+            String[] fileLine = s.split(" ");
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sb0 = new StringBuilder();
+            for (String value : fileLine) {
+                Token token = new Token(value);
+                //System.out.print(token.lexeme);
+                if (value.equals("\n") || value.equals(""))
+                    continue;
+                sb.append(token.tokenType + " ");
+                sb0.append(token.lexeme + " ");
+                //fw.write(token.tokenType + " ");
+                //System.out.print(token.tokenType + " ");
+            }
 
-                for (String value : fileLine) {
-                    Token token = new Token(value);
-                    //System.out.print(token.lexeme);
-                    if (value.equals("\n") || value.equals(""))
-                        continue;
-                    fw.write(token.tokenType + " ");
-                    //System.out.print(token.tokenType + " ");
-                }
+            lexicals.add(sb.toString());
                 //System.out.println("\n");
-                fw.write("\n");
+                //fw.write("\n");
                 //System.out.println("");
 
             }
+        /*for (String value : lexicals) {
+            System.out.println(value);
+        }*/
 
-            fw.close();
-        }catch (IOException err) {
-            err.printStackTrace();
-        }
-
-
+        RecursiveDescent rd = new RecursiveDescent();
+        rd.createRules();
 
         //Token token = new Token(",DMULTU,");
         //System.out.println(token.tokenType);
