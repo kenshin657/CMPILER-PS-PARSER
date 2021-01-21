@@ -72,7 +72,7 @@ public class Parse {
         HashMap<String, Rule> rules = rd.createRules();
 
         for (String lex : lexicals) {
-            rd.parse(lex, rules);
+            System.out.println(rd.parse(lex, rules));
         }
         //Token token = new Token(",DMULTU,");
         //System.out.println(token.tokenType);

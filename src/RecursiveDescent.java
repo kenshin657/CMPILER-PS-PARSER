@@ -97,6 +97,7 @@ public class RecursiveDescent {
         Stack<String> stack = new Stack<String>();
         Stack<String> inputStack = new Stack<String>();
         historyStack = new Stack<>();
+        int lhsCheck = 0;
 
         //processing input into a stack
         String[] inputArray = input.split(" ");
@@ -112,19 +113,38 @@ public class RecursiveDescent {
 
         //System.out.println(stack.peek());
 
+        if (inputStack.contains("ERROR"))
+            return "NOT ACCEPTED";
+
         while (!stack.isEmpty()) {
+            if (inputStack.isEmpty()) {
+                if (stack.peek().equals("ep") || stack.peek().equals("tp")) {
+                    stack.pop();
+                }
+                else {
+                    return "ERROR NA PRE";
+                }
+                continue;
+            }
+
             if (Character.isLowerCase(stack.peek().charAt(0))) {
-                stack = expand(stack, stack.peek(), rules);
+                if (!stack.peek().equals(historyProdRule))
+                    lhsCheck = 0;
+                stack = expand(stack, stack.peek(), rules, lhsCheck);
+                lhsCheck++;
             }
             else if (Character.isUpperCase(stack.peek().charAt(0))){
                 //part wherein you match with current input
                 if (inputStack.peek().equals(stack.peek())) {
+                    stack.pop();
+                    inputStack.pop();
+                    System.out.println("IT MATCHED");
 
                 }
                 else {
                     //do backtracking
                     stack = performBacktrack(stack, historyProdRule, rules);
-                    break;
+                    System.out.println(lhsCheck);
                 }
 
             }
@@ -132,21 +152,26 @@ public class RecursiveDescent {
 
         //System.out.println("it exited");
 
-        return "";
+        return "FINISHED";
     }
 
-    private Stack expand(Stack stack, String production, HashMap<String, Rule> rules) {
+    private Stack expand(Stack stack, String production, HashMap<String, Rule> rules, int lhsCheck) {
         if (stack.isEmpty())
             return stack;
 
+        historyProdRule = production;
         stack.pop();
 
         //System.out.println("I am expanding");
         //algorithm for expanding the stack
         List<String> grammarRHS = rules.get(production).getRHS();
-        String curRHS = grammarRHS.get(0); //replace with history check later
+        String curRHS = grammarRHS.get(lhsCheck); //replace with history check later
 
         String[] tmp = curRHS.split(" ");
+        if (tmp[0].equals("epsilon")) {
+            return stack;
+        }
+        ptr = tmp.length;
         Collections.reverse(Arrays.asList(tmp));
 
         for (String arr : Arrays.asList(tmp)) {
@@ -154,7 +179,7 @@ public class RecursiveDescent {
             historyStack.push(arr);
         }
 
-        //System.out.println(stack);
+        System.out.println(stack);
 
         return stack;
     }
@@ -162,9 +187,17 @@ public class RecursiveDescent {
     private Stack performBacktrack(Stack stack, String production, HashMap<String, Rule> rules) {
 
         //removing previous rules from the stack
+        List<String> rhs = rules.get(production).getRHS();
 
+        for (int i = 0; i < ptr; i++) {
+            stack.pop();
+        }
 
+        ptr = 0;
 
+        stack.push(production);
+
+        System.out.println(stack);
 
         return stack;
     }
