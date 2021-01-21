@@ -1,6 +1,7 @@
 import javax.print.DocFlavor;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Parse {
@@ -68,8 +69,11 @@ public class Parse {
         }*/
 
         RecursiveDescent rd = new RecursiveDescent();
-        rd.createRules();
+        HashMap<String, Rule> rules = rd.createRules();
 
+        for (String lex : lexicals) {
+            rd.parse(lex, rules);
+        }
         //Token token = new Token(",DMULTU,");
         //System.out.println(token.tokenType);
 
