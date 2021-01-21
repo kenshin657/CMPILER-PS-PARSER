@@ -1,3 +1,4 @@
+import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -93,28 +94,41 @@ public class RecursiveDescent {
         return rules;
     }
 
-    public String parse(String input, HashMap<String, Rule> rules){
+    public String parse(String input, HashMap<String, Rule> rules, String lexeme){
+        //System.out.println("\nLEXEME: " + lexeme);
+        //System.out.println("INPUT: " + input);
         Stack<String> stack = new Stack<String>();
         Stack<String> inputStack = new Stack<String>();
+        Stack<String> lexemeStack = new Stack<String>();
+
         historyStack = new Stack<>();
         int lhsCheck = 0;
 
         //processing input into a stack
         String[] inputArray = input.split(" ");
+        String[] lexemeArray = lexeme.split(" ");
+
         Collections.reverse(Arrays.asList(inputArray));
+        Collections.reverse(Arrays.asList(lexemeArray));
+
         for (String inp : Arrays.asList(inputArray)) {
             inputStack.push(inp);
         }
 
+        //for error Recovery
+        for (String lexInput : Arrays.asList(lexemeArray)) {
+            lexemeStack.push(lexInput);
+        }
+
         //System.out.println(inputStack.toString());
 
-        String start = rules.get("e").getLHS();
+        String start = rules.get("e").getLHS(); // starting entry point
         stack.push(start);
 
         //System.out.println(stack.peek());
 
-        if (inputStack.contains("ERROR"))
-            return "NOT ACCEPTED";
+        //if (inputStack.contains("ERROR"))
+        //    return "NOT ACCEPTED";
 
         while (!stack.isEmpty()) {
             if (inputStack.isEmpty()) {
@@ -122,7 +136,7 @@ public class RecursiveDescent {
                     stack.pop();
                 }
                 else {
-                    return "ERROR NA PRE";
+                    return "REJECT. Missing Token '" + stack.peek() + "'";
                 }
                 continue;
             }
@@ -138,21 +152,26 @@ public class RecursiveDescent {
                 if (inputStack.peek().equals(stack.peek())) {
                     stack.pop();
                     inputStack.pop();
-                    System.out.println("IT MATCHED");
+                    lexemeStack.pop();
+                    //System.out.println("IT MATCHED");
 
                 }
                 else {
                     //do backtracking
                     stack = performBacktrack(stack, historyProdRule, rules);
-                    System.out.println(lhsCheck);
+                    //System.out.println(lhsCheck);
                 }
 
             }
         }
 
+        if (stack.isEmpty() && !inputStack.isEmpty()) {
+            return "REJECT. Offending Token '" + lexemeStack.pop() + "'";
+        }
+
         //System.out.println("it exited");
 
-        return "FINISHED";
+        return "ACCEPT";
     }
 
     private Stack expand(Stack stack, String production, HashMap<String, Rule> rules, int lhsCheck) {
@@ -165,6 +184,13 @@ public class RecursiveDescent {
         //System.out.println("I am expanding");
         //algorithm for expanding the stack
         List<String> grammarRHS = rules.get(production).getRHS();
+
+        if (lhsCheck > grammarRHS.size()-1) {
+            stack.clear();
+            return stack;
+        }
+
+
         String curRHS = grammarRHS.get(lhsCheck); //replace with history check later
 
         String[] tmp = curRHS.split(" ");
@@ -179,7 +205,7 @@ public class RecursiveDescent {
             historyStack.push(arr);
         }
 
-        System.out.println(stack);
+        //System.out.println(stack);
 
         return stack;
     }
@@ -197,7 +223,7 @@ public class RecursiveDescent {
 
         stack.push(production);
 
-        System.out.println(stack);
+        //System.out.println(stack);
 
         return stack;
     }

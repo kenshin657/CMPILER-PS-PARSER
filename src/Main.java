@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Parse {
+public class Main {
     public static void main(String[] args) {
         /*READ FILE LOCATION*/
         //BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -59,6 +59,7 @@ public class Parse {
             }
 
             lexicals.add(sb.toString());
+            lexemes.add(sb0.toString());
                 //System.out.println("\n");
                 //fw.write("\n");
                 //System.out.println("");
@@ -71,8 +72,31 @@ public class Parse {
         RecursiveDescent rd = new RecursiveDescent();
         HashMap<String, Rule> rules = rd.createRules();
 
-        for (String lex : lexicals) {
-            System.out.println(rd.parse(lex, rules));
+        int count = 1;
+        int nLexe = 0;
+
+        try {
+            FileWriter fw = new FileWriter("output.txt");
+
+            for (String lex : lexicals) {
+                if (lex.equals("")) {
+                    nLexe++;
+                    fw.write("\n");
+                    continue;
+                }
+
+                String fileText = lexemes.get(nLexe).trim() + " - " + rd.parse(lex, rules, lexemes.get(nLexe)) + "\n";
+                fw.write(fileText);
+
+                //System.out.println(lex);
+                //System.out.println("Test Case [" + count + "]: " + rd.parse(lex, rules, lexemes.get(nLexe)));
+                nLexe++;
+                count++;
+            }
+
+            fw.close();
+        } catch (IOException err) {
+            err.printStackTrace();
         }
         //Token token = new Token(",DMULTU,");
         //System.out.println(token.tokenType);
