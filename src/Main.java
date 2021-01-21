@@ -69,6 +69,8 @@ public class Main {
             System.out.println(value);
         }*/
 
+
+        //EVERYTHING BELOW IS FOR THE RECURSIVE DESCENT
         RecursiveDescent rd = new RecursiveDescent();
         HashMap<String, Rule> rules = rd.createRules();
 
