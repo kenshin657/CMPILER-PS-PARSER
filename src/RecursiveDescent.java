@@ -126,12 +126,26 @@ public class RecursiveDescent {
 
         //System.out.println(stack.peek());
 
-        //if (inputStack.contains("ERROR"))
-        //    return "NOT ACCEPTED";
+        //find rules that have epsilon in them
+        ArrayList<String> epsil = new ArrayList<String>();
+
+        for (Map.Entry<String, Rule> entry : rules.entrySet()) {
+            if (entry.getValue().getRHS().contains("epsilon")) {
+                //System.out.println("The rule that has eplison is: " + entry.getKey());
+                epsil.add(entry.getKey().trim());
+            }
+        }
 
         while (!stack.isEmpty()) {
             if (inputStack.isEmpty()) {
-                if (stack.peek().equals("ep") || stack.peek().equals("tp")) {
+                boolean checker = false;
+                for (String ep : epsil) {
+                    if (stack.peek().equals(ep)) {
+                        checker = true;
+                    }
+                }
+
+                if (checker) {
                     stack.pop();
                 }
                 else {
@@ -203,7 +217,6 @@ public class RecursiveDescent {
             stack.push(arr);
             historyStack.push(arr);
         }
-
         //System.out.println(stack);
 
         return stack;
